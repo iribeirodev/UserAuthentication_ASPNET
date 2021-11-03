@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using ShopAutenticacao.Models;
 using Microsoft.Extensions.Options;
 using ShopAutenticacao.Services;
+using ShopAutenticacao.Services.Config;
 
 namespace ShopAutenticacao
 {
@@ -36,6 +37,9 @@ namespace ShopAutenticacao
             );
 
             services.AddSingleton<UserService>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDbInitializer, DbInitializer>();
 
             services.AddControllers();
 
@@ -71,6 +75,8 @@ namespace ShopAutenticacao
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShopAutenticacao v1"));
+
+                SeedData(app);
             }
 
             app.UseHttpsRedirection();
@@ -88,6 +94,20 @@ namespace ShopAutenticacao
             {
                 endpoints.MapControllers();
             });
+        }
+
+        /// <summary>
+        /// Initialize database with admin data
+        /// </summary>
+        /// <param name="app"></param>
+        private void SeedData(IApplicationBuilder app) 
+        {
+            var scopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+            using (var scope = scopeFactory.CreateScope()) 
+            {
+                var dbInitializer = scope.ServiceProvider.GetService<IDbInitializer>();
+                dbInitializer.SeedData();
+            }
         }
     }
 }
