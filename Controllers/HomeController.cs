@@ -11,9 +11,8 @@ namespace ShopAutenticacao.Controllers
     [ApiController]
     public class HomeController: ControllerBase
     {
-        private readonly UserService _userService;
-
-        public HomeController(UserService userService)
+        private readonly IUserService _userService;
+        public HomeController(IUserService userService) 
         {
             _userService = userService;
         }
