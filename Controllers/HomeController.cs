@@ -1,7 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ShopAutenticacao.Models;
 using ShopAutenticacao.Request;
 using ShopAutenticacao.Response;
 using ShopAutenticacao.Services;
@@ -51,12 +50,8 @@ namespace ShopAutenticacao.Controllers
                     StatusCode = 500
                 };
 
-            _userService.Create(new User{
-                Username = createUserRequest.Username,
-                Password = createUserRequest.Password,
-                Role = createUserRequest.Role
-            });
-            
+            _userService.Create(createUserRequest);
+
             return Ok(new UserCreatedResponse{
                 UserName = createUserRequest.Username,
                 Role = createUserRequest.Role
