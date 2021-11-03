@@ -1,6 +1,7 @@
 using ShopAutenticacao.Models;
 using MongoDB.Driver;
 using System.Linq;
+using ShopAutenticacao.Request;
 
 namespace ShopAutenticacao.Services
 {
@@ -31,9 +32,14 @@ namespace ShopAutenticacao.Services
         public User GetByUsername(string username) =>
             _users.Find(u => u.Username.ToLower() == username.ToLower()).SingleOrDefault();
 
-        public User Create(User user) 
+        public User Create(CreateUserRequest createUserRequest) 
         {
-            user.Password = AesOperation.EncryptString(Settings.SymmetricKey, user.Password);
+            var user = new User{
+                Username = createUserRequest.Username,
+                Password = AesOperation.EncryptString(Settings.SymmetricKey, createUserRequest.Password),
+                Role = createUserRequest.Role
+            };
+
             _users.InsertOne(user);
 
             return user;
